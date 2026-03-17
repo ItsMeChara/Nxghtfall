@@ -19,55 +19,71 @@
     </header>
 
     <main>
+        <section class="toolbar" aria-label="Blog controls">
+            <button type="button" id="theme-toggle">Toggle dark mode</button>
+            <button type="button" id="sort-posts">Sort newest first</button>
+            <button type="button" id="back-to-top">Back to top</button>
+            <button type="button" id="show-latest">Latest post only</button>
+            <button type="button" id="show-all-posts">Show all posts</button>
+            <button type="button" id="reset-likes">Reset likes</button>
+        </section>
+
         <!-- Blog Post 1 -->
-        <article>
+        <article data-date="2025-03-11">
             <h2>[Title of First Post]</h2>
             <p class="meta">Posted on <time datetime="2025-03-11">March 11, 2025</time> by [Author Name]</p>
             <p>This is the content of my first blog post. You can add more paragraphs and images here.</p>
             <a href="post1.html">Read more...</a>
+            <button type="button" class="like-btn">Like (<span class="like-count">0</span>)</button>
         </article>
 
         <!-- Blog Post 2 -->
-        <article>
+        <article data-date="2025-03-01">
             <h2>[Title of Second Post]</h2>
             <p class="meta">Posted on <time datetime="2025-03-01">March 1, 2025</time> by [Author Name]</p>
             <p>This is the content of my second blog post. It's a great place to share updates.</p>
             <a href="post2.html">Read more...</a>
+            <button type="button" class="like-btn">Like (<span class="like-count">0</span>)</button>
         </article>
 
-        <article>
+        <article data-date="2025-03-01">
             <h2>[Title of Second Post]</h2>
             <p class="meta">Posted on <time datetime="2025-03-01">March 1, 2025</time> by [Author Name]</p>
             <p>This is the content of my second blog post. It's a great place to share updates.</p>
             <a href="post2.html">Read more...</a>
+            <button type="button" class="like-btn">Like (<span class="like-count">0</span>)</button>
         </article>
 
-        <article>
+        <article data-date="2025-03-01">
             <h2>[Title of Second Post]</h2>
             <p class="meta">Posted on <time datetime="2025-03-01">March 1, 2025</time> by [Author Name]</p>
             <p>This is the content of my second blog post. It's a great place to share updates.</p>
             <a href="post2.html">Read more...</a>
+            <button type="button" class="like-btn">Like (<span class="like-count">0</span>)</button>
         </article>
 
-        <article>
+        <article data-date="2025-03-01">
             <h2>[Title of Second Post]</h2>
             <p class="meta">Posted on <time datetime="2025-03-01">March 1, 2025</time> by [Author Name]</p>
             <p>This is the content of my second blog post. It's a great place to share updates.</p>
             <a href="post2.html">Read more...</a>
+            <button type="button" class="like-btn">Like (<span class="like-count">0</span>)</button>
         </article>
 
-        <article>
+        <article data-date="2025-03-01">
             <h2>[Title of Second Post]</h2>
             <p class="meta">Posted on <time datetime="2025-03-01">March 1, 2025</time> by [Author Name]</p>
             <p>This is the content of my second blog post. It's a great place to share updates.</p>
             <a href="post2.html">Read more...</a>
+            <button type="button" class="like-btn">Like (<span class="like-count">0</span>)</button>
         </article>
 
-        <article>
+        <article data-date="2025-03-01">
             <h2>[Title of Second Post]</h2>
             <p class="meta">Posted on <time datetime="2025-03-01">March 1, 2025</time> by [Author Name]</p>
             <p>This is the content of my second blog post. It's a great place to share updates.</p>
             <a href="post2.html">Read more...</a>
+            <button type="button" class="like-btn">Like (<span class="like-count">0</span>)</button>
         </article>
         <!-- More posts can be added here -->
 
@@ -76,6 +92,75 @@
     <footer>
         <p>&copy; 2025 My Simple Blog</p>
     </footer>
+
+    <script>
+        const main = document.querySelector("main");
+        const sortButton = document.getElementById("sort-posts");
+        const themeButton = document.getElementById("theme-toggle");
+        const topButton = document.getElementById("back-to-top");
+        const latestButton = document.getElementById("show-latest");
+        const allPostsButton = document.getElementById("show-all-posts");
+        const resetLikesButton = document.getElementById("reset-likes");
+        let newestFirst = true;
+
+        sortButton.addEventListener("click", () => {
+            const posts = Array.from(main.querySelectorAll("article"));
+            posts.sort((a, b) => {
+                const dateA = new Date(a.dataset.date);
+                const dateB = new Date(b.dataset.date);
+                return newestFirst ? dateB - dateA : dateA - dateB;
+            });
+            posts.forEach((post) => main.appendChild(post));
+            sortButton.textContent = newestFirst ? "Sort oldest first" : "Sort newest first";
+            newestFirst = !newestFirst;
+        });
+
+        themeButton.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            themeButton.textContent = document.body.classList.contains("dark-mode")
+                ? "Toggle light mode"
+                : "Toggle dark mode";
+        });
+
+        topButton.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        const likeButtons = Array.from(document.querySelectorAll(".like-btn"));
+
+        likeButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const count = button.querySelector(".like-count");
+                count.textContent = String(Number(count.textContent) + 1);
+            });
+        });
+
+        latestButton.addEventListener("click", () => {
+            const posts = Array.from(main.querySelectorAll("article"));
+            let latestPost = null;
+            posts.forEach((post) => {
+                if (!latestPost || new Date(post.dataset.date) > new Date(latestPost.dataset.date)) {
+                    latestPost = post;
+                }
+            });
+            posts.forEach((post) => {
+                post.classList.toggle("is-hidden", post !== latestPost);
+            });
+        });
+
+        allPostsButton.addEventListener("click", () => {
+            main.querySelectorAll("article").forEach((post) => {
+                post.classList.remove("is-hidden");
+            });
+        });
+
+        resetLikesButton.addEventListener("click", () => {
+            likeButtons.forEach((button) => {
+                const count = button.querySelector(".like-count");
+                count.textContent = "0";
+            });
+        });
+    </script>
 
 </body>
 </html>
